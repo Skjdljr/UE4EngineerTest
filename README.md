@@ -1,59 +1,47 @@
-# UE4EngineerTest
-This project currently runs on UE4 4.25.4
-
+# AIREngineerTest
 ----------------------------------------------
-## Instructions
-### Setup
 
-Fork this repository before cloning.
-Once forked, feel free to submit to it as much as you'd like.
-When completed, send us an email and a link to your fork of the repository.
+## Setup
+Requirements: Unreal Engine 4.25.4, Visual Studio 2019
 
-### Create a robot that randomly navigates an environment.
+Fork this repository before cloning. Once forked, feel free to submit to it as much as you'd like. When completed, send us an email and a link to your fork of the repository.
 
-- The pawn should move forward from its starting location anywhere in the map by 10 units at a time until it 'hits' something (until an object is less than 15 units away from it in its forward direction), then rotate left or right a little (randomly, between 5 and 25 degrees), and try moving forward again, repeating the process indefinitely
-- The pawn's starting location should be 10 units above the floor; you don't have to enforce this in code, just drop it in and move it up by 10 units
-- Rotating and moving forward can happen discretely and don't need to be animated (i.e. move 10 units or rotate n degrees all at once, with every frame representing a new rotation or position)
-- In between moves, wait for one second before proceeding to the next move. Where and how this is implemented (C++, BP node graph) is up to you.
-- You can assume that the starting Z location of the pawn will always be its Z location (no downward line checks and floor placement necessary)
+## The Assignment
+1. Create and implement a class of Robots that are capable of executing a series of Instructions given to them
+2. Set up two Robots with differing behavior, the first a "Dropper" that randomly roams around a map dropping Spheres, and a "Grabber" that seeks those Spheres in order to properly document them (and then destroy the evidence). 
 
-### Have the robot take pictures and output information
+Both Robots should be derived from a base Robot class (parent class `APawn`) that you define and implement. Each Robot should be capable of ingesting a queue of Instructions (fed from itself or an external entity) and then execute them one after another. All Robots should be capable of correctly executing all types of Instructions.
 
-- After every time the pawn moves forward or rotates, take a screenshot and save it to the saved folder, incrementing the name for each image taken. ie: image_1.png, image_2.png, image_3.png, etc..
-- In addition to the screenshot, output a text file with a list of the actor names that are in the viewport when the image is taken
-  - Each image should have a corresponding text file. ie: image_1.png and image_1_actors.txt
-  - An example folder structure would be the following:
-    - Project/Saved/
-      - Data/
-        - image_1.png
-        - image_1_actors.txt
-        - image_2.png
-        - image_2_actors.txt
-        
-        
-The collision check against objects and rotation of the pawn should happen on the C++ side. The easiest way to set this up would likely be a C++ Blueprint with the C++ functionality handling line traces for obstruction checks and choice of new direction called from the blueprint's node graph during tick. Please use UE4 conventions and frameworks for C++ implementation.
-**Online research, UE4 documentation, Stackoverflow, etc., are all fair game. Google to your heart's content :)**
+## Robot Instructions
+- At minimum, you must implement Instructions that enable a Robot to :
+	- Move forward - Your Robots should **not** collide with each other or the map environment. There is no expectation of the Robots navigating vertically, only along the X and Y axes.
+	- Rotate
+	- Wait
+	- Drop a Sphere - To be used by a Dropper Robot. 
+	- Document a Sphere - To be used by the Grabber Robot. At minimum, this Instruction -must- 
+		1. take a screenshot of the Sphere within a reasonable distance
+		2. output a text file with a list of the actor names that are in the viewport when the image is taken. Each image should have a corresponding text file. (ie: image_1.png and image_1_actors.txt)
+		3. destroy the Sphere
 
-When hitting Play In Editor, the viewport should be from the pov of the robot, and it should begin navigating the environment and doing the following:
-- Move or turn
-- Take an image 
-- Write a text file of all actors visible in the viewport
-- Wait one second (This can happen asynchronously during the image taking and text file writing)
-- Move/turn again and repeat loop
+- All Instructions should be derived from the base `URobotInstruction` UObject class, the shell of which has been provided. Each Instruction child should only implement one general type of behavior. 
+- The Instructions are intended to be leveraged by someone else on the team who cannot modify their logic (perhaps a level designer with limited Blueprint knowledge). Because of this, Instructions should have a reasonable about of parameters or inputs exposed. For example, an Instruction that instructs the Robot to move forward in a direction should probably have a "distance" parameter that can be set.
+- You are encouraged to create as many additional Instruction types as you think would be useful for this scenario. Instructions should create, call and/or reference other Instructions where it makes sense to do so.
 
-### Create a second robot ###
+## The Project
+We have provided the following content for this task:
+- `Content/AIReverie/Robot_TestMap` : The level used for evaluating. This is the only part of the project that should not be modified in any way.
+- `Content/AIReverie/BP_AIReverie_GameMode`: A game mode created and set as the default in the project.
+- The provided `URobotInstruction` UObject class, and project base classes.
 
-- This robot should be implemented in blueprints as a child of the previous robot.
-- This robot should behave the same way as robot 1, but it should also drop a sphere actor into the level where it is every time it takes an image.
 
-***Some things to note***
+## Expectations
+- When evaluating, both Robot types will be placed in a random location on the included map and then we will hit Play. Upon hitting Play, the viewport should be from the POV of the Grabber Robot, and the two Robots should immediately begin executing their instructions. The Robots should diligently continue their tasks until we exit the Play session.
+- We are not expecting advanced AI logic or complex navigation. Feel free to make things as complicated as you like but keep in mind whatever you implement, the Robots and their Instructions should **function** above all else.
+- Feel free to leverage both C++ and Blueprints where you think it would make the most sense to do so, given that these Robots should be able to be setup by a non-programmer. Please use UE4 conventions and frameworks for all C++ implementations. Add as many classes or structs you feel is necessary to accomplish the task, you must use the provided `URobotInstruction` UObject class and its included `ExecuteInstruction()` function, but these can be modified as you see fit.
+- Using plugins or editing Project & Editor configuration files shouldn't be necessary. Please contact us if there's something you'd like to change or use.
+- Online research, UE4 documentation, etc. are all fair game. Google to your heart's content!
 - Performance is not a concern for this. Feel free to get all actors in the viewport as naively as you would like, and if you have ideas on how to make it more performant you can just let us know your thoughts when you submit your final project.
-- We are also not perfect, because of that you may be unclear on how to proceed due to something unclear in the instructions. If that happens, just let us know and we would be happy to clarify what we are expecting.
-- The first and second robots are not expected to run at the same time.
 
-We have created a map in the project called `AIReverieMap.umap` in the `AIReverie` folder. Feel free to use that map or create your own.
-If you create your own, ensure it has a variety of objects in it.
+If you are unclear on **any** part of these instructions, please reach out and we will be more than happy to clarify what we are expecting.
 
-A game mode has also been created and set as the default in the project, which can be found at `AIReverie/BP_AIReverie_GameMode`
-
-Please email us with any questions, we understand that this is a different use case than you may be used to and the instructions might not be clear. We are happy to clarify anything.
+Good luck, and have fun!
