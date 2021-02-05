@@ -20,7 +20,6 @@ public:
 
 	virtual bool IsComplete();
 
-
 	UPROPERTY(EditAnyWhere)
 	bool showDebugMessages;
 

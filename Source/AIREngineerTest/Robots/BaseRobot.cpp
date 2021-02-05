@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "AIREngineerTest/RobotInstruction.h"
 #include "BaseRobot.h"
+#include "AIREngineerTest/RobotInstruction.h"
+
 
 // Sets default values
 ABaseRobot::ABaseRobot():robotName("baseRobot"), curInstruction(nullptr)

@@ -14,9 +14,15 @@ class AIRENGINEERTEST_API UInstruction_DropSphere : public URobotInstruction
 {
 	GENERATED_BODY()
 
+	UInstruction_DropSphere();
+
 	/*The actor class to spawn by dropper robot*/
 	UPROPERTY(EditAnyWhere)
 	TSubclassOf<AActor> ActorToSpawn;
+
+	//Offset from robot to spawn from
+	UPROPERTY(EditAnyWhere)
+	FVector spawnOffset;
 
 	/*
 	* DropSphere 

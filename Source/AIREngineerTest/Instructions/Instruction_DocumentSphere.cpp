@@ -5,7 +5,7 @@
 #include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
 #include "Core/Public/Misc/FileHelper.h"
 
-UInstruction_DocumentSphere::UInstruction_DocumentSphere()
+UInstruction_DocumentSphere::UInstruction_DocumentSphere(): reasonableDistance(300)
 {
 }
 
@@ -13,27 +13,19 @@ void UInstruction_DocumentSphere::ExecuteInstruction(ABaseRobot* robot)
 {
     if (robot != nullptr)
     {
-        //screen shot
-        FScreenshotRequest::RequestScreenshot("image", false, true);
-
-        auto filename = FScreenshotRequest::GetFilename();
-
-        //create the array 
-        TArray<AActor*> onScreenActors;
-
-        //Find all on screen
-        FindActorsInView(onScreenActors);
-
-        //save them out
-        SaveActorsToFile(onScreenActors);
-
-        //once done, set true
-        isComplete = true;
+        //loop through all
+        //find closest sphere 
+        //set as goal
+        //then move toward
+        //then document
+        
+        //Fire event to BP, let it do our dirty work
+        robot->FindDroppedObjects(this, reasonableDistance);
 
         if (showDebugMessages)
         {
             auto robotName = robot->GetRobotName().ToString();
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed DocumentSphere actors found on screen %f "), *robotName, onScreenActors.Num()));
+            //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed DocumentSphere actors found on screen %f "), *robotName, onScreenActors.Num()));
         }
     }
 }
@@ -41,6 +33,34 @@ void UInstruction_DocumentSphere::ExecuteInstruction(ABaseRobot* robot)
 bool UInstruction_DocumentSphere::IsComplete()
 {
     return isComplete;
+}
+
+/*
+* called from baserobot: when/if it finds the closest sphere
+*/
+void UInstruction_DocumentSphere::SetClosestSphereFromBP(AActor* sphere, float distance)
+{
+    if (distance <= reasonableDistance)
+    {
+        //Request screen shot
+        FScreenshotRequest::RequestScreenshot("image", false, true);
+
+        //create the array to store actors 
+        TArray<AActor*> onScreenActors;
+
+        //Find all actors in viewport
+        FindActorsInView(onScreenActors);
+
+        //save them out
+        SaveActorsToFile(onScreenActors);
+
+        //Kill the sphere we just found
+        if (sphere != nullptr)
+            sphere->SetLifeSpan(0.1f);
+
+        //done
+        isComplete = true;
+    }
 }
 
 /*
@@ -73,7 +93,7 @@ void UInstruction_DocumentSphere::FindActorsInView(TArray<AActor*>& onScreenActo
 }
 
 /*
-* Helper function to save the actors passed in: to a file
+* Helper function to save the actors passed in to a file
 */
 void UInstruction_DocumentSphere::SaveActorsToFile(TArray<AActor*>& onScreenActors)
 {
@@ -99,3 +119,4 @@ void UInstruction_DocumentSphere::SaveActorsToFile(TArray<AActor*>& onScreenActo
         FileContent.Empty();
     }
 }
+

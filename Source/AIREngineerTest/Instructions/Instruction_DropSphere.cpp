@@ -3,23 +3,37 @@
 
 #include "Instruction_DropSphere.h"
 
+UInstruction_DropSphere::UInstruction_DropSphere(): spawnOffset(100,0,0)
+{
+}
+
 void UInstruction_DropSphere::ExecuteInstruction(ABaseRobot* robot)
 {
     if (robot != nullptr)
     {
-        //auto curTransform = robot->GetActorTransform();
-        //const FVector offset(-150,0,0);
-        
-        GetWorld()->SpawnActor<AActor>(ActorToSpawn);
+        if (robot->actorToSpawn != nullptr)
+        { 
+            auto spawnPosition = robot->GetActorTransform().GetLocation() - spawnOffset;
 
-        isComplete = true;
+            // Spawn the asset that was chosen for the dropper 
+            GetWorld()->SpawnActor<AActor>(robot->actorToSpawn, spawnPosition, robot->GetControlRotation());
 
-        if (showDebugMessages)
+            isComplete = true;
+
+            if (showDebugMessages)
+            {
+                auto robotName = robot->GetRobotName().ToString();
+
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed Drop Sphere"), *robotName));
+            }
+        }
+        else
         {
             auto robotName = robot->GetRobotName().ToString();
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Does not have a actorToSpawn set - nothing will be spawned"), *robotName));
 
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed Drop Sphere"), *robotName));
         }
+
     }
 }
 

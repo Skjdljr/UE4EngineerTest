@@ -16,13 +16,21 @@ class AIRENGINEERTEST_API UInstruction_DocumentSphere : public URobotInstruction
 	
 	UInstruction_DocumentSphere();
 
+	UPROPERTY(EditAnyWhere)
+	float reasonableDistance;
+
+	UFUNCTION(BlueprintCallable)
+	void SetClosestSphereFromBP(AActor* sphere, float distance);
+
 	void ExecuteInstruction(ABaseRobot* robot) final;
 
 	bool IsComplete() final;
 
 	private:
 
+	//Find the actors that are currently on screen
 	void FindActorsInView(TArray<AActor*>& onScreenActors);
-	void SaveActorsToFile(TArray<AActor*>& onScreenActors);
 
+	//Save the actors found on screen to a file
+	void SaveActorsToFile(TArray<AActor*>& onScreenActors);
 };
