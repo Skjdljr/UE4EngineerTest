@@ -9,9 +9,19 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class AIRENGINEERTEST_API UInstruction_Rotate : public URobotInstruction
 {
 	GENERATED_BODY()
-	
+	UInstruction_Rotate();
+
+	/*
+	* Amount to rotate
+	*/
+	UPROPERTY(EditAnywhere)
+	float rotationAmount;
+
+	void ExecuteInstruction(ABaseRobot* robot) final;
+
+	bool IsComplete() final;
 };

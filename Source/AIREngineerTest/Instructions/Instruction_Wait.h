@@ -9,9 +9,24 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class AIRENGINEERTEST_API UInstruction_Wait : public URobotInstruction
 {
 	GENERATED_BODY()
+
+public:
+	UInstruction_Wait();
+
+	/*
+	* Time to delay/wait
+	*/
+	UPROPERTY(EditAnywhere)
+	float waitTime;
 	
+	void ExecuteInstruction(ABaseRobot* robot) final;
+
+	bool IsComplete() final;
+private:
+	FTimerHandle timerHandle;
+	void TimerElapsed();
 };

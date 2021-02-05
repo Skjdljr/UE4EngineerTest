@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "AIREngineerTest/RobotInstruction.h"
 #include "BaseRobot.generated.h"
 
-UCLASS()
+class URobotInstruction;
+
+UCLASS(Blueprintable)
 class AIRENGINEERTEST_API ABaseRobot : public APawn
 {
 	GENERATED_BODY()
@@ -16,24 +17,32 @@ public:
 	// Sets default values for this pawn's properties
 	ABaseRobot();
 
-	void AddInstruction(URobotInstruction* instruction);
-	void AddInstruction(TArray<URobotInstruction*> instructions);
+	//List of our Robot instructions, make it editable from BP
+	UPROPERTY(EditAnyWhere, Instanced,  BlueprintReadWrite, meta = (DisplayName = "Array of Robot Instructions"), Category = "Base Robot")
+	TArray <URobotInstruction*> instructions;
 
-protected:
-	
-	UPROPERTY()
-	TArray <URobotInstruction*> Instructions;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	//Helper to add instructions
+	void AddInstruction(URobotInstruction* inInstruction);
+	void AddInstructions(TArray<URobotInstruction*> inInstructions);
 
-	virtual void ExecuteInstruction();
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FName GetRobotName();
+
+protected:
+
+	/*
+	* Name to use for the robot
+	*/
+	UPROPERTY(BlueprintReadWrite)
+	FName robotName;
+
+	/*
+	* The current instruction in the queue
+	*/
+	URobotInstruction* curInstruction;
 };

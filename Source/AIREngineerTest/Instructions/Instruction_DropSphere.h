@@ -9,9 +9,19 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class AIRENGINEERTEST_API UInstruction_DropSphere : public URobotInstruction
 {
 	GENERATED_BODY()
-	
+
+	/*The actor class to spawn by dropper robot*/
+	UPROPERTY(EditAnyWhere)
+	TSubclassOf<AActor> ActorToSpawn;
+
+	/*
+	* DropSphere 
+	*/
+	void ExecuteInstruction(ABaseRobot* robot) final;
+
+	bool IsComplete() final;
 };

@@ -3,3 +3,32 @@
 
 #include "Instruction_MoveForward.h"
 
+UInstruction_MoveForward::UInstruction_MoveForward() : distanceToMove(100)
+{
+
+}
+
+void UInstruction_MoveForward::ExecuteInstruction(ABaseRobot* robot)
+{
+    if (robot != nullptr)
+    {
+        auto curLocation = robot->GetActorLocation();
+        auto forwardLocation = curLocation + FVector(distanceToMove, 0, 0);
+
+        auto newLocation = FMath::VInterpTo(robot->GetActorLocation(), forwardLocation, 2, 1);
+        robot->SetActorLocation(newLocation);
+
+        isComplete = true;
+
+        if (showDebugMessages)
+        {
+            auto robotName = robot->GetRobotName().ToString();
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed Move Forward"), *robotName));
+        }
+    }
+}
+
+bool UInstruction_MoveForward::IsComplete()
+{
+    return isComplete;
+}

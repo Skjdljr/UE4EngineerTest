@@ -9,9 +9,20 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class AIRENGINEERTEST_API UInstruction_DocumentSphere : public URobotInstruction
 {
 	GENERATED_BODY()
 	
+	UInstruction_DocumentSphere();
+
+	void ExecuteInstruction(ABaseRobot* robot) final;
+
+	bool IsComplete() final;
+
+	private:
+
+	void FindActorsInView(TArray<AActor*>& onScreenActors);
+	void SaveActorsToFile(TArray<AActor*>& onScreenActors);
+
 };

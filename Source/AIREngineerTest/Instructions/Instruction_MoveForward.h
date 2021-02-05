@@ -9,9 +9,20 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class AIRENGINEERTEST_API UInstruction_MoveForward : public URobotInstruction
 {
 	GENERATED_BODY()
-	
+
+	UInstruction_MoveForward();
+
+	/*
+	* Set the distance to move
+	*/
+	UPROPERTY(EditAnywhere)
+	float distanceToMove;
+
+	void ExecuteInstruction(ABaseRobot* robot) final;
+
+	bool IsComplete() final;
 };

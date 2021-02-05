@@ -2,12 +2,17 @@
 
 #include "RobotInstruction.h"
 
-URobotInstruction::URobotInstruction()
+URobotInstruction::URobotInstruction() : showDebugMessages(false), isComplete(false)
 {
 	
 }
 
-bool URobotInstruction::ExecuteInstruction()
+void URobotInstruction::ExecuteInstruction(ABaseRobot* robot)
 {
-	return true;
+	//no op
+}
+
+bool URobotInstruction::IsComplete()
+{
+	return isComplete;
 }
