@@ -10,12 +10,14 @@ UInstruction_MoveForward::UInstruction_MoveForward() : distanceToMove(100)
 
 void UInstruction_MoveForward::ExecuteInstruction(ABaseRobot* robot)
 {
+    isComplete = false;
+
     if (robot != nullptr)
     {
         auto curLocation = robot->GetActorLocation();
         auto forwardLocation = curLocation + robot->GetActorForwardVector() * distanceToMove;
 
-        auto newLocation = FMath::VInterpTo(robot->GetActorLocation(), forwardLocation, 2, 1);
+        auto newLocation = FMath::VInterpTo(robot->GetActorLocation(), forwardLocation, 1, 1);
         robot->SetActorLocation(newLocation, true);
 
         isComplete = true;

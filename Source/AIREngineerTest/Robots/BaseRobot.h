@@ -8,12 +8,23 @@
 
 class URobotInstruction;
 
+UENUM()
+enum RobotType
+{
+	GRABBER     UMETA(DisplayName = "Grabber Robot"),
+	DROPPER      UMETA(DisplayName = "Dropper Robot")
+};
+
 UCLASS(Blueprintable)
 class AIRENGINEERTEST_API ABaseRobot : public APawn
 {
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Robot")
+	TEnumAsByte<RobotType> robotType;
+
 	// Sets default values for this pawn's properties
 	ABaseRobot();
 
@@ -29,9 +40,17 @@ public:
 	void AddInstruction(URobotInstruction* inInstruction);
 	void AddInstructions(TArray<URobotInstruction*> inInstructions);
 
-	//Helper function to be created by blueprint
+	//Bp event to seek out the object given
 	UFUNCTION(BlueprintImplementableEvent)
-	void FindDroppedObjects(UInstruction_DocumentSphere* callingInstruction, float reasonableDistance);
+	void SeekObject(AActor* object, UInstruction_DocumentSphere* callingInstruction);
+
+	//Bp event to seek out the object given
+	UFUNCTION(BlueprintImplementableEvent)
+	void MoveForward(float distanceToMove);
+
+	//Bp event to seek out the object given
+	UFUNCTION(BlueprintImplementableEvent)
+	void Rotate(float rotationAmount, UInstruction_Rotate* instruction);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -53,4 +72,8 @@ protected:
 	* The current instruction in the queue
 	*/
 	URobotInstruction* curInstruction;
+
+private:
+	//the index into the array of instructions
+	int curInstructionIndex;
 };

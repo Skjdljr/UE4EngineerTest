@@ -3,12 +3,14 @@
 
 #include "Instruction_DropSphere.h"
 
-UInstruction_DropSphere::UInstruction_DropSphere(): spawnOffset(100,0,0)
+UInstruction_DropSphere::UInstruction_DropSphere(): spawnOffset(140,0,0)
 {
 }
 
 void UInstruction_DropSphere::ExecuteInstruction(ABaseRobot* robot)
 {
+    isComplete = false;
+
     if (robot != nullptr)
     {
         if (robot->actorToSpawn != nullptr)
@@ -31,9 +33,7 @@ void UInstruction_DropSphere::ExecuteInstruction(ABaseRobot* robot)
         {
             auto robotName = robot->GetRobotName().ToString();
             GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Does not have a actorToSpawn set - nothing will be spawned"), *robotName));
-
         }
-
     }
 }
 

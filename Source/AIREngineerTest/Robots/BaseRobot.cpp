@@ -5,7 +5,7 @@
 
 
 // Sets default values
-ABaseRobot::ABaseRobot():robotName("baseRobot"), curInstruction(nullptr)
+ABaseRobot::ABaseRobot():robotName("baseRobot"), curInstruction(nullptr), curInstructionIndex(0)
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -32,44 +32,31 @@ void ABaseRobot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (instructions.Num() > 0 && curInstruction == nullptr)
+	if (instructions.Num() > 0)
 	{
-		//Get our instruction
-		curInstruction = instructions[0];
+		if (curInstruction == nullptr)
+		{
+			//Get our instruction
+			curInstruction = instructions[curInstructionIndex];
 
-		//Let our Instruction fire
-		curInstruction->ExecuteInstruction(this);
+			//make sure they didn't send us a null instruction
+			if (curInstruction != nullptr)
+			{
+				//Let our Instruction fire
+				curInstruction->ExecuteInstruction(this);
+			}
+		}
+		else if (curInstruction != nullptr && curInstruction->IsComplete())
+		{
+			curInstruction = nullptr;
 
-		//Remove from the list 
-		instructions.RemoveAt(0);
+			curInstructionIndex++;
+
+			//instead of removing lets let it loop, so the robots keeeeeeep on going
+			if (curInstructionIndex >= instructions.Num())
+				curInstructionIndex = 0;
+		}
 	}
-	else if (curInstruction != nullptr && curInstruction->IsComplete())
-	{
-		curInstruction = nullptr;
-	}
-
-	//if (curInstruction != nullptr )
-	//{
-	//	//check for complete
-	//	if (curInstruction->IsComplete())
-	//	{
-	//		//delete if complete
-	//		curInstruction = nullptr;
-	//	}
-	//}
-	//else 
-	//{
-	//	//grab an instructions if we have it
-	//	if ((instructions.Num() > 0))
-	//	{	
-	//		//Get our instruction
-	//		curInstruction = instructions[0];
-	//		//Execute
-	//		curInstruction->ExecuteInstruction(this);
-	//		//Remove from the list 
-	//		instructions.RemoveAt(0);
-	//	}
-	//}
 }
 
 // Called to bind functionality to input
@@ -83,3 +70,4 @@ FName ABaseRobot::GetRobotName()
 	return robotName;
 }
 
+// when a sphere is dropped send a notify event to the grabber so it knows to start seeking

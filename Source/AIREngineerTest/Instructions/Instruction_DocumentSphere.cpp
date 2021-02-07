@@ -5,27 +5,31 @@
 #include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
 #include "Core/Public/Misc/FileHelper.h"
 
-UInstruction_DocumentSphere::UInstruction_DocumentSphere(): reasonableDistance(300)
+UInstruction_DocumentSphere::UInstruction_DocumentSphere() : waitTimeToSearchAgain(3.0f)
 {
 }
 
 void UInstruction_DocumentSphere::ExecuteInstruction(ABaseRobot* robot)
 {
+    isComplete = false;
+
     if (robot != nullptr)
     {
-        //loop through all
-        //find closest sphere 
-        //set as goal
-        //then move toward
-        //then document
-        
-        //Fire event to BP, let it do our dirty work
-        robot->FindDroppedObjects(this, reasonableDistance);
+        callingRobot = robot;
 
-        if (showDebugMessages)
+        //Find closest dropped object
+        auto closestObject = FindClosestDroppedObject();
+
+        //an object has not spawned yet
+        if (closestObject != nullptr)
         {
-            auto robotName = robot->GetRobotName().ToString();
-            //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed DocumentSphere actors found on screen %f "), *robotName, onScreenActors.Num()));
+            //Fire event to BP, let it do our dirty work
+            callingRobot->SeekObject(closestObject, this);
+        }
+        else
+        {
+            //so instead of sitting in this instruction forever, just set to true.
+            isComplete = true;
         }
     }
 }
@@ -36,31 +40,74 @@ bool UInstruction_DocumentSphere::IsComplete()
 }
 
 /*
-* called from baserobot: when/if it finds the closest sphere
+* called from baserobot: when it finds the closest sphere
 */
-void UInstruction_DocumentSphere::SetClosestSphereFromBP(AActor* sphere, float distance)
+void UInstruction_DocumentSphere::ExecuteDocumentationFromBP(AActor* sphere)
 {
-    if (distance <= reasonableDistance)
+    //Request screen shot
+    FScreenshotRequest::RequestScreenshot("image", false, true);
+
+    //Kill the sphere we found
+    if (sphere != nullptr)
+        sphere->Destroy();
+
+    //create the array to store actors 
+    TArray<AActor*> onScreenActors;
+
+    //Find all actors in viewport
+    FindActorsInView(onScreenActors);
+
+    //save them out
+    SaveActorsToFile(onScreenActors);
+
+    //done
+    isComplete = true;
+
+    if (showDebugMessages)
     {
-        //Request screen shot
-        FScreenshotRequest::RequestScreenshot("image", false, true);
-
-        //create the array to store actors 
-        TArray<AActor*> onScreenActors;
-
-        //Find all actors in viewport
-        FindActorsInView(onScreenActors);
-
-        //save them out
-        SaveActorsToFile(onScreenActors);
-
-        //Kill the sphere we just found
-        if (sphere != nullptr)
-            sphere->SetLifeSpan(0.1f);
-
-        //done
-        isComplete = true;
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%s Executed DocumentSphere actors found on screen %f "), *callingRobot->GetRobotName().ToString(), onScreenActors.Num()));
     }
+}
+
+AActor* UInstruction_DocumentSphere::FindClosestDroppedObject()
+{
+    auto world = GetWorld();
+
+    AActor* closestObject = nullptr;
+
+    if (world != nullptr)
+    {
+        TArray<AActor*> foundActors;
+
+        //find all of the dropped objects
+        UGameplayStatics::GetAllActorsOfClass(world, callingRobot->actorToSpawn.Get(), foundActors);
+
+        float closestDistance = 0.0f;
+        
+        for (auto object : foundActors)
+        {
+            //ue4 why you name the length size.... 
+            float vectorLength = (object->GetActorLocation() - callingRobot->GetActorLocation()).Size();
+
+            //first time: its the closest
+            if (closestObject == nullptr)
+            {
+                closestDistance = vectorLength;
+                closestObject = object;
+            }
+            else
+            {
+                // store the closest
+                if (vectorLength < closestDistance)
+                {
+                    closestDistance = vectorLength;
+                    closestObject = object;
+                }
+            }
+        }
+    }
+
+    return closestObject;
 }
 
 /*

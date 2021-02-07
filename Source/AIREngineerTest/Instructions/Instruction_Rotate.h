@@ -21,6 +21,9 @@ class AIRENGINEERTEST_API UInstruction_Rotate : public URobotInstruction
 	UPROPERTY(EditAnywhere)
 	float rotationAmount;
 
+	UFUNCTION(BlueprintCallable)
+	void SetComplete(bool complete);
+
 	void ExecuteInstruction(ABaseRobot* robot) final;
 
 	bool IsComplete() final;

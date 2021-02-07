@@ -1,15 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Instruction_Wait.h"
 
 UInstruction_Wait::UInstruction_Wait() : waitTime(5.0f)
 {
-    isComplete = false;
+
 }
 
 void UInstruction_Wait::ExecuteInstruction(ABaseRobot* robot)
 {
+    isComplete = false;
+
     if (robot != nullptr)
     {
         //Set a timer to wait
@@ -31,8 +32,10 @@ bool UInstruction_Wait::IsComplete()
 
 void UInstruction_Wait::TimerElapsed()
 {
+
     //clean up our timer
     GetWorld()->GetTimerManager().ClearTimer(timerHandle);
+    GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 
     isComplete = true;
 

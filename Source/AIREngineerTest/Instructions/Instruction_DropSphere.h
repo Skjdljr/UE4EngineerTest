@@ -20,7 +20,7 @@ class AIRENGINEERTEST_API UInstruction_DropSphere : public URobotInstruction
 	UPROPERTY(EditAnyWhere)
 	TSubclassOf<AActor> ActorToSpawn;
 
-	//Offset from robot to spawn from
+	//Offset from robot to spawn from, use a positive value
 	UPROPERTY(EditAnyWhere)
 	FVector spawnOffset;
 

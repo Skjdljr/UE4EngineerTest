@@ -20,6 +20,9 @@ public:
 
 	virtual bool IsComplete();
 
+	UFUNCTION(BlueprintCallable)
+	virtual bool AbortInstruction();
+
 	UPROPERTY(EditAnyWhere)
 	bool showDebugMessages;
 

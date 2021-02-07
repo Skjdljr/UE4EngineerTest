@@ -3,17 +3,22 @@
 
 #include "Instruction_Rotate.h"
 
-UInstruction_Rotate::UInstruction_Rotate() : rotationAmount(90)
+UInstruction_Rotate::UInstruction_Rotate() : rotationAmount(10)
 {
+}
+
+void UInstruction_Rotate::SetComplete(bool complete)
+{
+    isComplete = complete;
 }
 
 void UInstruction_Rotate::ExecuteInstruction(ABaseRobot* robot)
 {
+    isComplete = false;
+
     if (robot != nullptr)
     {
-        auto curRotation = robot->GetActorRotation();
-        robot->AddActorLocalRotation(curRotation.Add(0, rotationAmount, 0));
-        isComplete = true;
+        robot->Rotate(rotationAmount, this);
 
         if (showDebugMessages)
         {
