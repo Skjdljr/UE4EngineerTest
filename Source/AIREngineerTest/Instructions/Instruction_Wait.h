@@ -26,6 +26,7 @@ public:
 	void ExecuteInstruction(ABaseRobot* robot) final;
 
 	bool IsComplete() final;
+
 private:
 	FTimerHandle timerHandle;
 	void TimerElapsed();

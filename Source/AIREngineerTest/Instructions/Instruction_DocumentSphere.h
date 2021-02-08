@@ -16,10 +16,6 @@ class AIRENGINEERTEST_API UInstruction_DocumentSphere : public URobotInstruction
 	
 	UInstruction_DocumentSphere();
 
-	//Time to wait before searching for another dropped object
-	UPROPERTY(EditAnyWhere)
-	float waitTimeToSearchAgain;
-
 	//Bp will find the closest actor and send it so we can document it
 	UFUNCTION(BlueprintCallable)
 	void ExecuteDocumentationFromBP(AActor* sphere);

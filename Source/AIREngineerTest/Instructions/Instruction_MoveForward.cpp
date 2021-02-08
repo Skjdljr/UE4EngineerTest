@@ -3,13 +3,15 @@
 
 #include "Instruction_MoveForward.h"
 
-UInstruction_MoveForward::UInstruction_MoveForward() : distanceToMove(100)
+UInstruction_MoveForward::UInstruction_MoveForward() : distanceToMove(200)
 {
 
 }
 
 void UInstruction_MoveForward::ExecuteInstruction(ABaseRobot* robot)
 {
+    Super::ExecuteInstruction(robot);
+
     isComplete = false;
 
     if (robot != nullptr)
@@ -18,7 +20,7 @@ void UInstruction_MoveForward::ExecuteInstruction(ABaseRobot* robot)
         auto forwardLocation = curLocation + robot->GetActorForwardVector() * distanceToMove;
 
         auto newLocation = FMath::VInterpTo(robot->GetActorLocation(), forwardLocation, 1, 1);
-        robot->SetActorLocation(newLocation, true);
+        robot->SetActorRelativeLocation(newLocation, true);
 
         isComplete = true;
 

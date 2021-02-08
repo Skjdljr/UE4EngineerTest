@@ -2,13 +2,15 @@
 
 #include "Instruction_Wait.h"
 
-UInstruction_Wait::UInstruction_Wait() : waitTime(5.0f)
+UInstruction_Wait::UInstruction_Wait() : waitTime(1.5f)
 {
 
 }
 
 void UInstruction_Wait::ExecuteInstruction(ABaseRobot* robot)
 {
+    Super::ExecuteInstruction(robot);
+
     isComplete = false;
 
     if (robot != nullptr)
@@ -32,14 +34,12 @@ bool UInstruction_Wait::IsComplete()
 
 void UInstruction_Wait::TimerElapsed()
 {
-
     //clean up our timer
     GetWorld()->GetTimerManager().ClearTimer(timerHandle);
-    GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-
-    isComplete = true;
 
     //debug info
     if (showDebugMessages)
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("%f Timer Complete"), waitTime));
+
+    isComplete = true;
 }

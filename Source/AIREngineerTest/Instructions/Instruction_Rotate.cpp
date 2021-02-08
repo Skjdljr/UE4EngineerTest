@@ -3,10 +3,11 @@
 
 #include "Instruction_Rotate.h"
 
-UInstruction_Rotate::UInstruction_Rotate() : rotationAmount(10)
+UInstruction_Rotate::UInstruction_Rotate() : rotationAmount(30)
 {
 }
 
+//called from bp when done rotating
 void UInstruction_Rotate::SetComplete(bool complete)
 {
     isComplete = complete;
@@ -14,6 +15,8 @@ void UInstruction_Rotate::SetComplete(bool complete)
 
 void UInstruction_Rotate::ExecuteInstruction(ABaseRobot* robot)
 {
+    Super::ExecuteInstruction(robot);
+
     isComplete = false;
 
     if (robot != nullptr)

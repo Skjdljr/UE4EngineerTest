@@ -16,13 +16,9 @@ class AIRENGINEERTEST_API UInstruction_DropSphere : public URobotInstruction
 
 	UInstruction_DropSphere();
 
-	/*The actor class to spawn by dropper robot*/
-	UPROPERTY(EditAnyWhere)
-	TSubclassOf<AActor> ActorToSpawn;
-
-	//Offset from robot to spawn from, use a positive value
-	UPROPERTY(EditAnyWhere)
-	FVector spawnOffset;
+	//Set the spawnlocation vector from BP
+	UFUNCTION(BlueprintCallable)
+	void SetSpawnLocationForDroppables(FVector spawnLocation);
 
 	/*
 	* DropSphere 
@@ -30,4 +26,7 @@ class AIRENGINEERTEST_API UInstruction_DropSphere : public URobotInstruction
 	void ExecuteInstruction(ABaseRobot* robot) final;
 
 	bool IsComplete() final;
+
+private:
+	ABaseRobot* callingRobot;
 };

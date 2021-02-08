@@ -69,5 +69,3 @@ FName ABaseRobot::GetRobotName()
 {
 	return robotName;
 }
-
-// when a sphere is dropped send a notify event to the grabber so it knows to start seeking

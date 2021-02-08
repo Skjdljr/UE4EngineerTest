@@ -5,12 +5,14 @@
 #include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
 #include "Core/Public/Misc/FileHelper.h"
 
-UInstruction_DocumentSphere::UInstruction_DocumentSphere() : waitTimeToSearchAgain(3.0f)
+UInstruction_DocumentSphere::UInstruction_DocumentSphere()
 {
 }
 
 void UInstruction_DocumentSphere::ExecuteInstruction(ABaseRobot* robot)
 {
+    Super::ExecuteInstruction(robot);
+
     isComplete = false;
 
     if (robot != nullptr)
@@ -49,7 +51,7 @@ void UInstruction_DocumentSphere::ExecuteDocumentationFromBP(AActor* sphere)
 
     //Kill the sphere we found
     if (sphere != nullptr)
-        sphere->Destroy();
+        sphere->SetLifeSpan(0.1f);
 
     //create the array to store actors 
     TArray<AActor*> onScreenActors;
@@ -69,6 +71,7 @@ void UInstruction_DocumentSphere::ExecuteDocumentationFromBP(AActor* sphere)
     }
 }
 
+//find closest object of the type set in bp
 AActor* UInstruction_DocumentSphere::FindClosestDroppedObject()
 {
     auto world = GetWorld();
@@ -131,6 +134,7 @@ void UInstruction_DocumentSphere::FindActorsInView(TArray<AActor*>& onScreenActo
         {
             auto onScreen = localPC->ProjectWorldLocationToScreen(actor->GetActorLocation(), screenRef);
 
+            //see if they are on screen
             if (onScreen)
             {
                 onScreenActors.Add(actor);

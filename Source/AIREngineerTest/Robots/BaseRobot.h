@@ -52,6 +52,11 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void Rotate(float rotationAmount, UInstruction_Rotate* instruction);
 
+	//Bp event to seek out the object given
+	UFUNCTION(BlueprintImplementableEvent)
+	void GetSpawnLocationForObjects(UInstruction_DropSphere* callingInstruction);
+
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

@@ -6,8 +6,10 @@
 #include "Robots/BaseRobot.h"
 #include "RobotInstruction.generated.h"
 
-/*Base instruction - Use EditInLineNew so it can be created in widget, also set it to instanced so we can change/add them in editor*/
-UCLASS(EditInlineNew, DefaultToInstanced)
+/*Base instruction - Use EditInLineNew so it can be created in widget, also set it to instanced so we can change/add them in editor
+* also set abstract so someone in BP cannot try and make one of these, as it will be NO-OP
+*/
+UCLASS(EditInlineNew, DefaultToInstanced, Abstract)
 class AIRENGINEERTEST_API URobotInstruction : public UObject
 {
 	GENERATED_BODY()
